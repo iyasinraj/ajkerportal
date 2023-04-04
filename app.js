@@ -9,7 +9,7 @@ const displayCatagory = (categoris) =>{
     const categorisDiv = document.getElementById('categoris-div');
     for(const category of categoris){
         const categoryItem = document.createElement('p')
-        categoryItem.innerHTML = `<a class = "text-decoration-none fw-bold" href="http://">${category.category_name}</a>`;
+        categoryItem.innerHTML = `<a class = "text-decoration-none fw-bold" href="#">${category.category_name}</a>`;
         categorisDiv.appendChild(categoryItem);
     }
 }
