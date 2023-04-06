@@ -1,190 +1,132 @@
-const catagory = async () => {
-    const url = `https://openapi.programming-hero.com/api/news/categories`;
+const dreamGirl = [
+    {
+      sokina: {
+        name: "bbu",
+        height: "5.4",
+        family: [{ father: "rock", mother: "shila", sister: "chinki" }],
+        age: undefined,
+        contactInfo: [
+          { facebook: {link: "https://www.facebook.com/", followers: "12545", status: "single", friendsList: [{ name: "rofik" }, undefined],},
+          },
+          { instagram: "https://www.instagram.com/" },
+        ],
+      },
+    },
+  ];
+ const result = dreamGirl[0].contactInfo;
+  console.log(result);
+
+
+
+
+
+
+/* 
+steps 
+1. find api link
+2. fetch the api url
+3. diclare display function
+4. add display function in fetch url function
+5. (optional) diclare fuction for custor url key
+*/
+
+
+
+
+const loadPhones = async(searchkey) =>{
+    const url = `https://openapi.programming-hero.com/api/phones?search=${searchkey}`;
     const res = await fetch(url);
     const data = await res.json();
-    displayCatagory(data.data.news_category);
+    displayPhones(data.data);
 }
 
-const displayCatagory = (categoris) =>{
-    const categorisDiv = document.getElementById('categoris-div');
-    for(const category of categoris){
-        const categoryItem = document.createElement('li');
-        categoryItem.classList.add('nav-item');
-        categoryItem.innerHTML = `
-        <a class="nav-link" href="#">${category.category_name}</a>
-        `;
-        categorisDiv.appendChild(categoryItem);
+
+const displayPhones = phones => {
+    const phoneContainer = document.getElementById('phones-container');
+    phoneContainer.innerHTML = ``;
+    
+
+    const showAll = document.getElementById('show-all')
+    if(phones.length > 15){
+        phones = phones.slice(0, 15);
+        showAll.classList.remove('d-none')
+    }else{
+        showAll.classList.add('d-none')
+    }
+
+    const noPhoneMasage = document.getElementById('noPhoneMassage');
+    if(phones.length === 0){
+        noPhoneMasage.classList.remove('d-none')
+    }
+    else{
+        noPhoneMasage.classList.add('d-none')
+    }
+
+    phones.forEach(phone => {
+    const div = document.createElement('div');
+    div.classList.add('col');
+    div.innerHTML = `
+            <div class="card h-100">
+                <img src="${phone.image}" class="card-img-top p-4" alt="...">
+           <div class="card-body">
+            <h5 class="card-title">${phone.phone_name}</h5>
+            <p class="card-text">${phone.brand}</p>
+            <!-- Button trigger modal -->
+            <button onclick = "phoneDetails('${phone.slug}')" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> Show More Details</button>
+    `;
+    phoneContainer.appendChild(div);        
+    });
+
+    loader(false);
+}
+
+// enter feature
+document.getElementById('input-field').addEventListener('keypress',function(e){
+    if(e.key === 'Enter'){
+        searchPhone()
+    }  
+})
+
+
+// program start from here by clickin search button from UI
+const searchPhone = () => {
+    loader(true);
+    const searchField = document.getElementById('input-field');
+    const searchkey = searchField.value;
+    loadPhones(searchkey);
+}
+
+// loader
+const loader = isLoading =>{
+    const spiner = document.getElementById('loader');
+    if(isLoading){
+        spiner.classList.remove('d-none')
+    }
+    else{
+        spiner.classList.add('d-none')
     }
 }
-catagory();
 
-const todaysHeadlines = async () => {
-    const url = `https://openapi.programming-hero.com/api/news/category/04`;
+
+const phoneDetails = async (id) => {
+    const url = `https://openapi.programming-hero.com/api/phone/${id}`;
     const res = await fetch(url);
     const data = await res.json();
-    displayTodaysHeadlines(data.data[2]);
+    displayPhoneDetails(data.data);
 }
 
-const displayTodaysHeadlines = (news) =>{
-    const TodaysHeadlines = document.getElementById('todays-headlines');
-    TodaysHeadlines.innerHTML = `
-    <div class="card shadow text-bg-dark">
-        <img src="${news.image_url}" class="card-img" alt="...">
-        <div class="card-img-overlay d-flex align-items-end">
-            <div>
-                <h5 class="card-title">${news.title}</h5>
-                <div class="d-flex">
-                <p class="card-text me-4">${news.author.published_date.slice(0, 10)}</p>
-                <p class="card-text"><small>${news.author.name}</small></p>
-                </div>
-            </div>
-        </div>
-    </div>
+const displayPhoneDetails = (phone) =>{
+    const title = document.getElementById('staticBackdropLabel');
+    title.innerText = phone.name
+    const modalBody = document.getElementById('modal-body');
+    modalBody.innerHTML = `
+    <img src="${phone.image}" alt="" srcset="">
+    <h1>Features</h1>
+    <h6>Chipset: ${phone.mainFeatures.chipSet}</h6>
+    <h6>Display Size: ${phone.mainFeatures.displaySize}</h6>
+    <h6>Memory: ${phone.mainFeatures.memory}</h6>
+    <h6>Storage: ${phone.mainFeatures.storage}</h6>
     `;
 }
-todaysHeadlines();
-
-const letestNews = async () => {
-    const url = `https://openapi.programming-hero.com/api/news/category/01`;
-    const res = await fetch(url);
-    const data = await res.json();
-    displayLetestNews(data.data);
-}
 
 
-const displayLetestNews = (letestNews) =>{
-    const letestNewsDiv = document.getElementById('letest-news');
-    for(const news of letestNews.slice(0,6)){
-        const newsItem = document.createElement('div');
-        newsItem.classList.add('col');
-        newsItem.innerHTML = `
-        <div class="card shadow rounded-4 h-100">
-            <img src="${news.image_url}" class="card-img-top" alt="...">
-            <div class="card-body">
-            <h5 class="card-title">${news.title}</h5>
-            </div>
-            <div class="px-2 d-flex justify-content-between">
-                <p class="me-4">${news.author.published_date.slice(0, 10)}</p>
-                <p>${news.author.name}</p>
-            </div>
-    </div>
-        `;
-        letestNewsDiv.appendChild(newsItem);
-    }
-}
-letestNews ()
-
-const worldNews = async () => {
-    const url = `https://openapi.programming-hero.com/api/news/category/03`;
-    const res = await fetch(url);
-    const data = await res.json();
-    displayWorldNews(data.data);
-}
-
-
-const displayWorldNews = (worldNews) =>{
-    const newsDiv = document.getElementById('world-news');
-    for(const news of worldNews.slice(0, 3)){
-        const newsItem = document.createElement('div');
-        newsItem.classList.add('col','card','my-2','border', 'text-light', 'border-0');
-        newsItem.innerHTML = `
-        <img src="${news.image_url}" class="card-img" alt="...">
-        <div class="card-img-overlay">
-            <h5 class="card-title fw-bold">${news.title}</h5>
-        </div>
-        `;
-        newsDiv.appendChild(newsItem);
-    }
-}
-worldNews ()
-
-const techNews = async () => {
-    const url = `https://openapi.programming-hero.com/api/news/category/05`;
-    const res = await fetch(url);
-    const data = await res.json();
-    displayTechNews(data.data);
-    console.log(data.data);
-}
-
-
-const displayTechNews = (techNews) =>{
-    const newsDiv = document.getElementById('tech-news');
-    const news1 = techNews[0];
-    const news2 = techNews[1];
-    const news3 = techNews[2];
-    
-    console.log(news1, news2, news3);
-    newsDiv.innerHTML = `
-    <div class="row row-cols-lg-2 row-cols-1">
-        <div class="col-lg-8 col-12">
-            <div class="card shadow mb-3 px-0">
-                <div class="row g-0">
-                    <div class="col-md-8">
-                        <div class="d-flex p-4 align-items-center">
-                            <!-- author details -->
-                            <img src="${news1.author.img}" class="rounded-circle me-4" style="height:50px; width:50px;" alt="">
-                            <p class="fs-4">${news1.author.name}</p>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">${news1.title}</h5>
-                            <p class="card-text">${news1.details.slice(0,100)}....</p>
-                            <p class="card-text"><small class="text-body-secondary">${news1.author.published_date.slice(0,10)}</small></p>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                    <img src="${news1.image_url}" class="img-fluid h-100 w-100 rounded-end" alt="...">
-                    </div>
-                </div>
-            </div>
-            <div class="card shadow mb-3 px-0">
-                    <div class="row g-0">
-        
-                        <div class="col-md-8">
-                                <div class="d-flex p-4 align-items-center">
-                                    <!-- author details -->
-                                    <img src="${news3.author.img}" class="rounded-circle me-4" style="height:50px; width:50px;" alt="">
-                                    <p class="fs-4">${news3.author.name}</p>
-                                </div>
-                                <div class="card-body">
-                                    <h5 class="card-title">${news3.title}</h5>
-                                    <p class="card-text">${news3.details.slice(0,100)}....</p>
-                                    <p class="card-text"><small class="text-body-secondary">${news3.author.published_date.slice(0,10)}</small></p>
-                                </div>
-                        </div>
-        
-                    <div class="col-md-4">
-                    <img src="${news3.image_url}" class="img-fluid h-100 w-100 rounded-end" alt="...">
-                    </div>
-                    
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-4 col-12">
-                <div class="card shadow mb-3 px-0">
-                    <div class="row g-0">
-        
-                        <div class="col-8 col-lg-12">
-                            <div class="d-flex p-4 align-items-center">
-                                <!-- author details -->
-                                <img src="${news2.author.img}" class="rounded-circle me-4" style="height:50px; width:50px;" alt="">
-                                <p class="fs-4">${news2.author.name}</p>
-                            </div>
-                            <div class="card-body">
-                                <h5 class="card-title">${news2.title}</h5>
-                                <p class="card-text">${news2.details.slice(0,100)}....</p>
-                                <p class="card-text"><small class="text-body-secondary">${news2.author.published_date.slice(0,10)}</small></p>
-                            </div>
-                        </div>
-        
-                        <div class="col-4 col-lg-12">
-                        <img src="${news2.image_url}" class="img-fluid h-100 w-100 rounded-end rounded-lg-buttom" alt="...">
-                        </div>
-                    
-                    </div>
-                </div>
-        </div>    
-    </div>
-    `;
-    
-}
-techNews ()
