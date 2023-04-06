@@ -6,4 +6,4 @@ using compotnent and technologies
 2. bootstrap
 2. API
 
-live project url: 
+live project url: https://charming-cobbler-efcafb.netlify.app/
